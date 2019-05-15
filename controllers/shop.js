@@ -2,12 +2,16 @@ const Product = require('../models/product');
 const Order = require('../models/order');
 
 exports.getProducts = (req, res, next) => {
+  const loggedIn = req.get('Cookie');
+  console.log('shopRoute_getProducts_loggedIn..... ', loggedIn);
+
   Product.find()
   .then(products => {
     res.render('shop/product-list', {
       prods: products,
       pageTitle: 'All Products',
-      path: '/products'
+      path: '/products',
+      isAuthenticated: loggedIn
     });
   })
   .catch(err => {
@@ -17,13 +21,15 @@ exports.getProducts = (req, res, next) => {
 
 exports.getProduct = (req, res, next) => {
   const prodId = req.params.productId;
+  const loggedIn = req.get('Cookie');
 
   Product.findById(prodId)
   .then(product => {
     res.render('shop/product-detail', {
       product: product,
       pageTitle: product.title,
-      path: '/products'
+      path: '/products',
+      isAuthenticated: loggedIn
     });
   })
   .catch(err => {
@@ -32,13 +38,16 @@ exports.getProduct = (req, res, next) => {
 };
 
 exports.getIndex = (req, res, next) => {
+  const loggedIn = req.get('Cookie');
+
   Product.find()
   .then(products => {
     //console.log(products)
     res.render('shop/index', {
       prods: products,
       pageTitle: 'Shop',
-      path: '/'
+      path: '/',
+      isAuthenticated: loggedIn
     });
   })
   .catch(err => {
@@ -47,6 +56,8 @@ exports.getIndex = (req, res, next) => {
 };
 
 exports.getCart = (req, res, next) => {
+  const loggedIn = req.get('Cookie');
+
   req.user
   .populate('cart.items.productId')   // populate related 'Product' into path 'cart.items.productId' (as set in model as ref in the same path)
   .execPopulate()   // convert populate into Promise
@@ -55,7 +66,8 @@ exports.getCart = (req, res, next) => {
     res.render('shop/cart', {
       path: '/cart',
       pageTitle: 'Your Cart',
-      products: userData.cart.items
+      products: userData.cart.items,
+      isAuthenticated: loggedIn
     });
   })
   .catch(err => {console.log(err)});
@@ -124,13 +136,16 @@ exports.postOrder = (req, res, next) => {
 };
 
 exports.getOrders = (req, res, next) => {
+  const loggedIn = req.get('Cookie');
+
   Order.find({'user.userId': req.user._id})   // find order that belongs to a particular user
   .then(orders => {
     console.log('getOrders_orders..... ', orders);
     res.render('shop/orders', {
       path: '/orders',
       pageTitle: 'Your Orders',
-      orders: orders
+      orders: orders,
+      isAuthenticated: loggedIn
     });
   })
   .catch(err => {console.log(err)});
@@ -150,8 +165,11 @@ exports.getOrders = (req, res, next) => {
 };
 
 exports.getCheckout = (req, res, next) => {
+  const loggedIn = req.get('Cookie');
+
   res.render('shop/checkout', {
     path: '/checkout',
-    pageTitle: 'Checkout'
+    pageTitle: 'Checkout',
+    isAuthenticated: loggedIn
   });
 };
