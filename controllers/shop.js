@@ -2,7 +2,7 @@ const Product = require('../models/product');
 const Order = require('../models/order');
 
 exports.getProducts = (req, res, next) => {
-  const loggedIn = req.get('Cookie');
+  const loggedIn = req.session.isLoggedIn;
   console.log('shopRoute_getProducts_loggedIn..... ', loggedIn);
 
   Product.find()
@@ -21,7 +21,7 @@ exports.getProducts = (req, res, next) => {
 
 exports.getProduct = (req, res, next) => {
   const prodId = req.params.productId;
-  const loggedIn = req.get('Cookie');
+  const loggedIn = req.session.isLoggedIn;
 
   Product.findById(prodId)
   .then(product => {
@@ -38,7 +38,7 @@ exports.getProduct = (req, res, next) => {
 };
 
 exports.getIndex = (req, res, next) => {
-  const loggedIn = req.get('Cookie');
+  const loggedIn = req.session.isLoggedIn;
 
   Product.find()
   .then(products => {
@@ -56,7 +56,7 @@ exports.getIndex = (req, res, next) => {
 };
 
 exports.getCart = (req, res, next) => {
-  const loggedIn = req.get('Cookie');
+  const loggedIn = req.session.isLoggedIn;
 
   req.user
   .populate('cart.items.productId')   // populate related 'Product' into path 'cart.items.productId' (as set in model as ref in the same path)
@@ -136,7 +136,7 @@ exports.postOrder = (req, res, next) => {
 };
 
 exports.getOrders = (req, res, next) => {
-  const loggedIn = req.get('Cookie');
+  const loggedIn = req.session.isLoggedIn;
 
   Order.find({'user.userId': req.user._id})   // find order that belongs to a particular user
   .then(orders => {
@@ -165,7 +165,7 @@ exports.getOrders = (req, res, next) => {
 };
 
 exports.getCheckout = (req, res, next) => {
-  const loggedIn = req.get('Cookie');
+  const loggedIn = req.session.isLoggedIn;
 
   res.render('shop/checkout', {
     path: '/checkout',

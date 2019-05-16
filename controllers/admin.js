@@ -1,7 +1,7 @@
 const Product = require('../models/product');
 
 exports.getAddProduct = (req, res, next) => {
-  const loggedIn = req.get('Cookie');
+  const loggedIn = req.session.isLoggedIn;
 
   res.render('admin/edit-product', {
     pageTitle: 'Add Product',
@@ -43,7 +43,7 @@ exports.getEditProduct = (req, res, next) => {
     return res.redirect('/');
   }
   const prodId = req.params.productId;
-  const loggedIn = req.get('Cookie');
+  const loggedIn = req.session.isLoggedIn;
 
   Product
   .findById(prodId)
@@ -88,7 +88,7 @@ exports.postEditProduct = (req, res, next) => {
 };
 
 exports.getProducts = (req, res, next) => {
-  const loggedIn = req.get('Cookie');
+  const loggedIn = req.session.isLoggedIn;
 
   Product
   .find()
