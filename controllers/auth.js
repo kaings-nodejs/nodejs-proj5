@@ -16,7 +16,10 @@ exports.postAuth = (req, res, next) => {
     .then(user => {
         req.session.isLoggedIn = true;     // set a property in session
         req.session.user = user;
-        res.redirect('/');
+        req.session.save(err => {   // save the above set session before redirect just as guarantee the session is set before redirecting
+            console.log(err);
+            res.redirect('/');
+        });
     })
     .catch(err => {console.log(err)});
 };
