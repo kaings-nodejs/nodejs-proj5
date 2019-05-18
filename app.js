@@ -34,7 +34,11 @@ app.use(
 );
 
 app.use((req, res, next) => {   // this will be run when there is any incoming request. it is put on top of all routes. All incoming request will trigger this middleware
-    User.findById('5cd28dd8cf381111b99915c5')
+    if(!req.session.user) {    // proceed without setting user in the request if there is no user found
+        return next();
+    };
+    
+    User.findById(req.session.user._id)
     .then(user => {
         console.log('user..... ', user);
         req.user = user;   // store mongoose object "user" into "req.user" so that it can be called/used globally
